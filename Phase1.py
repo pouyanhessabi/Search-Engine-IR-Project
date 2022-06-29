@@ -1,3 +1,4 @@
+import pickle
 import time
 
 import pandas as pd
@@ -10,8 +11,8 @@ def read_data():
         urls.append(row['url'])
         url_title[row['url']] = row['title']
         url_content[row['url']] = row['content']
-        if index > 500:
-            break
+        # if index > 2000:
+        #     break
 
 
 def pre_processing():
@@ -19,6 +20,7 @@ def pre_processing():
     tokenized_dict = {}
     stopwords = stopwords_list()
     stopwords.append("(")
+    stopwords.append(" ")
     stopwords.append(".")
     stopwords.append(")")
     stopwords.append("پیام/")
@@ -68,7 +70,7 @@ def construct_positional_index(url_tokenized_text):
 
 def get_query():
     # query = input("Write Query:\n")
-    query = "فوتبال تیم !انسان"
+    query = "تحریم های آمریکا علیه ایران"
     query = query.replace('"', "").split()
     negative_words = []
     positive_words = []
@@ -134,19 +136,36 @@ def answer_query(words: tuple):
 
 def show_ranked_documents(ranked_docs: list):
     for counter, tuple_ in enumerate(ranked_docs):
-        if counter > 3:
+        if counter > 4:
             break
         doc_id = tuple_[0]
+        print("***\nResult " + str(counter + 1))
         print("Document ID: " + str(doc_id))
-        print("URL" + str(urls[doc_id]))
+        print("URL: " + str(urls[doc_id]))
         print("Title: " + str(url_title[urls[doc_id]]))
-        print("Content:" + url_content[urls[doc_id]])
+        # print("Content:" + url_content[urls[doc_id]])
 
 
 urls = []
 url_title = {}
 url_content = {}
 read_data()
-url_token_content = pre_processing()
-positional_index = construct_positional_index(url_token_content)
+# url_token_content = pre_processing()
+# positional_index = construct_positional_index(url_token_content)
+"""
+For saving and writing file of positional index dictionary:
+# pos_index_file = open("data.pkl", "wb")
+# pickle.dump(positional_index, pos_index_file)
+# pos_index_file.close()
+"""
+"""
+For opening and reading file of positional index dictionary:
+# pos_index_file = open("data.pkl", "rb")
+# positional_index = pickle.load(pos_index_file)
+# pos_index_file.close()
+*** IMPORTANT NOTE: after that comment:"pre_processing()", "construct_positional_index(url_token_content)"
+"""
+pos_index_file = open("data.pkl", "rb")
+positional_index = pickle.load(pos_index_file)
+pos_index_file.close()
 show_ranked_documents(answer_query(get_query()))

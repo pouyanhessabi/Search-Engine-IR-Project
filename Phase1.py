@@ -143,29 +143,33 @@ def show_ranked_documents(ranked_docs: list):
         print("Document ID: " + str(doc_id))
         print("URL: " + str(urls[doc_id]))
         print("Title: " + str(url_title[urls[doc_id]]))
-        # print("Content:" + url_content[urls[doc_id]])
 
 
 urls = []
 url_title = {}
 url_content = {}
-read_data()
-# url_token_content = pre_processing()
-# positional_index = construct_positional_index(url_token_content)
-"""
-For saving and writing file of positional index dictionary:
-# pos_index_file = open("data.pkl", "wb")
-# pickle.dump(positional_index, pos_index_file)
-# pos_index_file.close()
-"""
-"""
-For opening and reading file of positional index dictionary:
-# pos_index_file = open("data.pkl", "rb")
-# positional_index = pickle.load(pos_index_file)
-# pos_index_file.close()
-*** IMPORTANT NOTE: after that comment:"pre_processing()", "construct_positional_index(url_token_content)"
-"""
-pos_index_file = open("data.pkl", "rb")
-positional_index = pickle.load(pos_index_file)
-pos_index_file.close()
-show_ranked_documents(answer_query(get_query()))
+positional_index = {}
+
+
+def run():
+    read_data()
+    # url_token_content = pre_processing()
+    # positional_index = construct_positional_index(url_token_content)
+    """
+    For saving and writing file of positional index dictionary:
+    # pos_index_file = open("data.pkl", "wb")
+    # pickle.dump(positional_index, pos_index_file)
+    # pos_index_file.close()
+    """
+    """
+    For opening and reading file of positional index dictionary:
+    # pos_index_file = open("data.pkl", "rb")
+    # positional_index = pickle.load(pos_index_file)
+    # pos_index_file.close()
+    *** IMPORTANT NOTE: after that comment:"pre_processing()", "construct_positional_index(url_token_content)"
+    """
+    pos_index_file = open("data.pkl", "rb")
+    global positional_index
+    positional_index = pickle.load(pos_index_file)
+    pos_index_file.close()
+    show_ranked_documents(answer_query(get_query()))

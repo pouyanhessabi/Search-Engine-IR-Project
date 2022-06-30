@@ -68,9 +68,7 @@ def construct_positional_index(url_tokenized_text):
     return term_posting
 
 
-def get_query():
-    # query = input("Write Query:\n")
-    query = "تحریم های آمریکا علیه ایران"
+def get_query(query: str):
     query = query.replace('"', "").split()
     negative_words = []
     positive_words = []
@@ -103,7 +101,7 @@ def search_negative_words(negative_words: list):
     return term_posting
 
 
-def rank_result(term_postings: dict):
+def rank_result_base_on_number(term_postings: dict):
     accepted_doc = set()
     doc_id_with_number_of_term = []
     # collect all documents
@@ -131,7 +129,7 @@ def answer_query(words: tuple):
     for term in negative_term_posting:
         if term in term_posting:
             term_posting.pop(term)
-    return rank_result(term_posting.copy())
+    return term_posting.copy()
 
 
 def show_ranked_documents(ranked_docs: list):
@@ -172,4 +170,7 @@ def run():
     global positional_index
     positional_index = pickle.load(pos_index_file)
     pos_index_file.close()
-    show_ranked_documents(answer_query(get_query()))
+    # query = input("Write Query:\n")
+    query = "تحریم های آمریکا علیه ایران"
+    term_posting_of_query = answer_query(get_query(query))
+    show_ranked_documents(rank_result_base_on_number(term_posting_of_query))

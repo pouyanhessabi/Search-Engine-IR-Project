@@ -125,6 +125,17 @@ def answer_query(words: tuple):
     return term_posting.copy()
 
 
+def champions_list(documents_term_score: dict):
+    term_posting = answer_query(get_query(query))
+    documents_term_score_clean = {}
+    for document in documents_term_score:
+        for term in term_posting:
+            if term in documents_term_score[document]:
+                documents_term_score_clean[document] = {term: documents_term_score[document][term]}
+
+    return documents_term_score_clean
+
+
 urls = []
 url_title = {}
 url_content = {}
@@ -142,9 +153,9 @@ pos_index_file = open("data.pkl", "rb")
 positional_index = pickle.load(pos_index_file)
 pos_index_file.close()
 
-docs_term_score = construct_document_term_score_for_document()
-
+docs_term_score_raw = construct_document_term_score_for_document()
 query = "تحریم های آمریکا علیه ایران و ایران"
+docs_term_score = champions_list(docs_term_score_raw)
 term_query_score = construct_term_query_score(answer_query(get_query(query)))
 
 similarity_doc = {}

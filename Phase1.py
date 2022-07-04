@@ -31,6 +31,7 @@ def pre_processing():
     stopwords.append("فارس")
     stopwords.append("گزارش")
     stopwords.append("خبرگزاری")
+    stopwords.append("علیه")
     stemmed_text = []
     for url in url_content:
         tokenized_dict[url] = word_tokenize((Normalizer().normalize(url_content[url])))
@@ -152,6 +153,7 @@ positional_index = {}
 def run():
     read_data()
     # url_token_content = pre_processing()
+    # global positional_index
     # positional_index = construct_positional_index(url_token_content)
     """
     For saving and writing file of positional index dictionary:
@@ -171,6 +173,9 @@ def run():
     positional_index = pickle.load(pos_index_file)
     pos_index_file.close()
     # query = input("Write Query:\n")
-    query = "تحریم های آمریکا علیه ایران"
+    query = "استقلال !مجیدی"
     term_posting_of_query = answer_query(get_query(query))
     show_ranked_documents(rank_result_base_on_number(term_posting_of_query))
+
+
+run()

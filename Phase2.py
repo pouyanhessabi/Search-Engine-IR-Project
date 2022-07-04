@@ -5,14 +5,6 @@ import pandas as pd
 from hazm import Stemmer
 
 
-# def tf_idf(term: str):
-#     score = []
-#     number_of_all_docs = len(urls)
-#     nt = len(positional_index[term])
-#     for document in positional_index[term]:
-#         tf = len(positional_index[term][document])
-#         score.append((1 + log(tf)) * (log(number_of_all_docs / nt)))
-#     term_score[term] = sum(score)
 def read_data():
     df = pd.read_json(path_or_buf='IR_data_news_12k.json', orient='index')
     for index, row in df.iterrows():
@@ -23,11 +15,11 @@ def read_data():
         #     break
 
 
-def get_query(query: str):
-    query = query.replace('"', "").split()
+def get_query():
+    query_list = query.replace('"', "").split()
     negative_words = []
     positive_words = []
-    for word in query:
+    for word in query_list:
         if "!" in word:
             negative_words.append(word.replace("!", ""))
         else:
@@ -50,7 +42,7 @@ def construct_document_term_score_for_document():
     """
     Note: this matrix is only for documents, then SCALAR PRODUCT OF TWO VECTORS: documents * query
     document_term_score = {key: document(int) | value: term_score(dict)}
-    term_score = {key: term(int) | value: number(int)}
+    term_score = {key: term(str) | value: number(int)}
     """
     document_term_score = {}
     for term in positional_index:
@@ -153,9 +145,8 @@ pos_index_file = open("data.pkl", "rb")
 positional_index = pickle.load(pos_index_file)
 pos_index_file.close()
 
-docs_term_score_raw = construct_document_term_score_for_document()
-query = "تحریم های آمریکا علیه ایران و ایران"
-docs_term_score = champions_list(docs_term_score_raw)
+query = "دهک های پرمصرف"
+docs_term_score = construct_document_term_score_for_document()
 term_query_score = construct_term_query_score(answer_query(get_query(query)))
 
 similarity_doc = {}
@@ -170,21 +161,33 @@ for document_ in docs_term_score:
     similar.clear()
 
 similarity_array = []
-for index in range(len(similarity_doc)):
+
+for index in range(len(urls)):
     if index not in similarity_doc:
         similarity_array.append(0)
     else:
         similarity_array.append(similarity_doc[index])
 
-sorted_array = sorted(similarity_array, reverse=True)
-
+tmp_set = set(similarity_array)
+sorted_array = []
+for counter in range(10):
+    if len(tmp_set) == 0:
+        break
+    tmp = max(tmp_set)
+    sorted_array.append(tmp)
+    tmp_set.remove(tmp)
 for index in range(len(sorted_array)):
-    if index > 5:
+    if index > 4:
         break
     if sorted_array[index] == 0:
         break
-    print("***\nResult " + str(index))
+    print("***\nResult " + str(index + 1))
     doc_id = similarity_array.index(sorted_array[index])
     print("Document ID: " + str(doc_id))
+    print("Score: " + str(sorted_array[index]))
     print("URL: " + str(urls[doc_id]))
     print("Title: " + str(url_title[urls[doc_id]]))
+    print("Number of all token in the document: " + str(len(docs_term_score[doc_id])))
+    # print("Number of given query word: " + str(
+    #     url_content[urls[doc_id]].count("دانشگاه") + url_content[urls[doc_id]].count("صنعت") + url_content[
+    #         urls[doc_id]].count("امیرکبیر")))
